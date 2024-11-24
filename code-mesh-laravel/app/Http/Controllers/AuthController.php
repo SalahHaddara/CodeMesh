@@ -24,7 +24,7 @@ class AuthController extends Controller
             return response()->json($validator->errors()->toJson(), 400);
         }
         
-        $folder_name = str_replace(' ', '_', $request->name).rand();
+        $folder_name = preg_replace('/\s+/', '_', $request->name).rand();
         File::makeDirectory(public_path($folder_name), 0777, true);
 
         $user = User::create([
