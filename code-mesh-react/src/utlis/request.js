@@ -2,7 +2,7 @@ import axios from 'axios'
 
 axios.defaults.baseURL = "http://127.0.0.1:8000/api/";
 
-export const requestAPI =  async({route,method = 'GET' ,body,header='Content-Type":"application/json'}) =>{
+export const requestAPI =  async({route,method = 'GET' ,body,header='application/json'}) =>{
     //route like api file php
     //method post/get
     //body is data
@@ -14,7 +14,7 @@ export const requestAPI =  async({route,method = 'GET' ,body,header='Content-Typ
             data:body,
             headers:{
                 'Content-Type': header,
-                // "Content-Type":"application/json",  application/x-www-form-urlencoded
+                // "Content-Type":"multipart/form-data" 
                 Authorization:localStorage.token,
             }
         });
