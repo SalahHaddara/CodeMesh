@@ -19,6 +19,14 @@ const WorkspaceScreen = () => {
         setActiveFile(newFile);
     };
 
+    const updateFileContent = (content) => {
+        const updatedFiles = files.map(f =>
+            f.id === activeFile.id ? {...f, content} : f
+        );
+        setFiles(updatedFiles);
+        setActiveFile({...activeFile, content});
+    };
+
     return (
         <div className="workspace">
             {/* Top Navigation */}
@@ -60,15 +68,7 @@ const WorkspaceScreen = () => {
                 <div className="editor-area">
                     <textarea
                         value={activeFile?.content}
-                        onChange={(e) => {
-                            const newFiles = files.map(f =>
-                                f.id === activeFile.id
-                                    ? {...f, content: e.target.value}
-                                    : f
-                            );
-                            setFiles(newFiles);
-                            setActiveFile({...activeFile, content: e.target.value});
-                        }}
+                        onChange={(e) => updateFileContent(e.target.value)}
                         className="code-editor"
                         placeholder="Start coding..."
                     />
