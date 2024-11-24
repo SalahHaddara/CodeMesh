@@ -1,25 +1,23 @@
 import axios from "axios";
+import React from "react";
 import '../styles/pages/login.css';
 import useForm from "../hooks/useForm";
-import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-    const navigate = useNavigate();
     const { form, updateForm } = useForm({
         email: "",
         password: "",
     });
 
-    const login = async () =>{
+    const fun = async () =>{
 
     } 
     
     return (
-        <>
-            <div class="main-login">
-                <div class="sub-login">
+            <div className="main-login">
+                <div className="sub-login">
                 <h1>CodeMesh</h1>
-                    <div class="login-form">
+                    <div className="login-form">
                         <div>
                             <h3>Email</h3>
                             <input name="email" type="email" placeholder="Enter your email"
@@ -31,14 +29,13 @@ const Login = () => {
                                 onChange={updateForm} />
                         </div>
                         <div>
-                            <button onClick={login}>Sign in</button>
+                            <button onClick={fun}>Sign in</button>
                             <br/>
                             <a href="#">Sign up</a>
                         </div>
                     </div>
                 </div>
             </div>
-        </>
     );
 
 }
