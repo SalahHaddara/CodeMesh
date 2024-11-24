@@ -1,15 +1,16 @@
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import '../styles/pages/login.css';
 import useForm from "../hooks/useForm";
 import { requestAPI } from '../utlis/request.js'
 
 const Login = () => {
+    setError('')
     const { form, updateForm } = useForm({
         email: "",
         password: "",
     });
-     
+    const [error, setError] = useState("");
     const login = async () =>{
         console.log('form')
         console.log(form)
@@ -19,18 +20,24 @@ const Login = () => {
             body:form,
         })
 
-        localStorage.setItem('token',result.token)
-        localStorage.setItem('user',JSON.stringify(result.user))
-        
-
-        console.log(result)
+        if(result.success){
+            localStorage.setItem('token',result.token)
+            localStorage.setItem('user',JSON.stringify(result.user))
+        }else{
+            setError(result.message)
+        }
     } 
     
     return (
             <div className="main-login">
+                
                 <div className="sub-login">
+
                 <h1>CodeMesh</h1>
+                {error && <h2 class="alert">{error}</h2>}
+
                     <div className="login-form">
+                        
                         <div>
                             <h3>Email</h3>
                             <input name="email" type="email" placeholder="Enter your email"
