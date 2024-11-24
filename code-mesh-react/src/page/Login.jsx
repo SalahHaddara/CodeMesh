@@ -2,15 +2,28 @@ import axios from "axios";
 import React from "react";
 import '../styles/pages/login.css';
 import useForm from "../hooks/useForm";
+import { requestAPI } from '../utlis/request.js'
 
 const Login = () => {
     const { form, updateForm } = useForm({
         email: "",
         password: "",
     });
+     
+    const login = async () =>{
+        console.log('form')
+        console.log(form)
+        const result = await requestAPI({
+            route:"login",
+            method:"POST",
+            body:form,
+        })
 
-    const fun = async () =>{
+        localStorage.setItem('token',result.token)
+        localStorage.setItem('user',JSON.stringify(result.user))
+        
 
+        console.log(result)
     } 
     
     return (
@@ -29,7 +42,7 @@ const Login = () => {
                                 onChange={updateForm} />
                         </div>
                         <div>
-                            <button onClick={fun}>Sign in</button>
+                            <button onClick={login}>Sign in</button>
                             <br/>
                             <a href="#">Sign up</a>
                         </div>
