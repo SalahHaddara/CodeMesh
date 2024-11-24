@@ -39,7 +39,8 @@ const WorkspaceScreen = () => {
                     <div className="file-explorer-content">
                         <div className="file-explorer-header">
                             <span className="section-title">Files</span>
-                            <span className="file-icon">📁</span>
+                            <button className={"new-file-button"} onClick={createNewFile}>+</button>
+
                         </div>
                         {files.map(file => (
                             <div

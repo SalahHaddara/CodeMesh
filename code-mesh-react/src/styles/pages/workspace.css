@@ -107,3 +107,15 @@
 .code-editor:focus {
     outline: none;
 }
+
+.new-file-button {
+    padding: 4px 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.new-file-button:hover {
+    background-color: #e5e7eb;
+}
