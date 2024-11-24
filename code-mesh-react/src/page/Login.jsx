@@ -19,11 +19,12 @@ const Login = () => {
         })
 
         if(result.success){
-            localStorage.setItem('token',result.token)
-            localStorage.setItem('user',JSON.stringify(result.user))
+            localStorage.setItem('token',result.data.token)
+            localStorage.setItem('user',JSON.stringify(result.data.user))
         }else{
             setError(result.message)
         }
+        console.log(result)
     } 
     
     return (
