@@ -3,10 +3,21 @@ import './../styles/pages/workspace.css';
 
 const WorkspaceScreen = () => {
     const [files, setFiles] = useState([
-        {id: 1, name: 'main.js', content: '// Your code here'},
-        {id: 2, name: 'styles.css', content: '/* Your styles here */'}
+        {id: 1, name: 'main.js', content: '// Your code here', language: 'javascript'},
+        {id: 2, name: 'styles.css', content: '/* Your styles here */', language: 'css'},
     ]);
     const [activeFile, setActiveFile] = useState(files[0]);
+
+    const createNewFile = () => {
+        const newFile = {
+            id: Date.now(),
+            name: `untitled-${files.length + 1}.js`,
+            content: '',
+            language: 'javascript'
+        };
+        setFiles([...files, newFile]);
+        setActiveFile(newFile);
+    };
 
     return (
         <div className="workspace">
