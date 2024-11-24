@@ -8,3 +8,16 @@
     justify-content: center;
     align-items: flex-start;
 }
+.sub-login{
+    background-color: #FFFFFF;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    align-items: flex-start;
+    width: 390px;
+    max-width: 500px;
+    height: 70vh;
+    gap: 10px;
+    border-radius: 10px;
+}
