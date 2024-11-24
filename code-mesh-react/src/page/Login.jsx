@@ -1,8 +1,19 @@
 import axios from "axios";
 import '../styles/pages/login.css';
+import useForm from "../hooks/useForm";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+    const navigate = useNavigate();
+    const { form, updateForm } = useForm({
+        email: "",
+        password: "",
+    });
 
+    const login = async () =>{
+
+    } 
+    
     return (
         <>
             <div class="main-login">
@@ -11,14 +22,16 @@ const Login = () => {
                     <div class="login-form">
                         <div>
                             <h3>Email</h3>
-                            <input type="text" placeholder="Enter your email"/>
+                            <input name="email" type="email" placeholder="Enter your email"
+                                onChange={updateForm}/>
                         </div>
                         <div>
                             <h3>Password</h3>
-                            <input type="password" placeholder="Enter your Password"/>
+                            <input name="password" type="password" placeholder="Enter your Password"
+                                onChange={updateForm} />
                         </div>
                         <div>
-                            <button>Sign in</button>
+                            <button onClick={login}>Sign in</button>
                             <br/>
                             <a href="#">Sign up</a>
                         </div>
