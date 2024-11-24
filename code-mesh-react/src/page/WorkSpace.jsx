@@ -46,7 +46,20 @@ const WorkspaceScreen = () => {
 
                 {/* Code Editor Area */}
                 <div className="editor-area">
-                    <textarea/>
+                    <textarea
+                        value={activeFile?.content}
+                        onChange={(e) => {
+                            const newFiles = files.map(f =>
+                                f.id === activeFile.id
+                                    ? {...f, content: e.target.value}
+                                    : f
+                            );
+                            setFiles(newFiles);
+                            setActiveFile({...activeFile, content: e.target.value});
+                        }}
+                        className="code-editor"
+                        placeholder="Start coding..."
+                    />
                 </div>
             </div>
         </div>
