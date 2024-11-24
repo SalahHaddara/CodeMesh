@@ -8,7 +8,14 @@ const useForm= (values) =>{
                 [event.target.name]: event.target.value,
             })
     };
-    return { form, updateForm };
+    const setFieldValue = (fieldName, value) => {
+        setForm((prevForm) => ({
+            ...prevForm,
+            [fieldName]: value,
+        }));
+    };
+    return { form, updateForm, setFieldValue };
+
 }
 
 export default useForm
