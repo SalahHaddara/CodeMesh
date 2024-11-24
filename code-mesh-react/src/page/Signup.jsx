@@ -1,19 +1,19 @@
-import axios from "axios";
 import React, { useState } from "react";
 import '../styles/pages/login.css';
-import useForm from "../hooks/useForm";
+import useForm from "../hooks/useForm.js";
 import { requestAPI } from '../utlis/request.js'
 
-const Login = () => {
+const Signup = () => {
     localStorage.clear();
     const [error, setError] = useState("");
+    
     const { form, updateForm } = useForm({
         email: "",
         password: "",
     });
-    const login = async () =>{
+    const signup = async () =>{
         const result = await requestAPI({
-            route:"login",
+            route:"register",
             method:"POST",
             body:form,
         })
@@ -35,7 +35,12 @@ const Login = () => {
                 {error && <h2 className="alert">{error}</h2>}
 
                     <div className="login-form">
-                        
+                        <div>
+                            <h3>Name</h3>
+                            <input name="name" type="text" placeholder="Enter your name"
+                                onChange={updateForm}/>
+                        </div>
+
                         <div>
                             <h3>Email</h3>
                             <input name="email" type="email" placeholder="Enter your email"
@@ -47,9 +52,9 @@ const Login = () => {
                                 onChange={updateForm} />
                         </div>
                         <div>
-                            <button onClick={login}>Sign in</button>
+                            <button onClick={signup}>Sign UP</button>
                             <br/>
-                            <a href="#">Sign up</a>
+                            <a href="#">Login</a>
                         </div>
                     </div>
                 </div>
@@ -58,4 +63,4 @@ const Login = () => {
 
 }
 
-export default Login;
+export default Signup;
