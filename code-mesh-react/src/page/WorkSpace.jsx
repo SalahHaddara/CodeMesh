@@ -7,6 +7,8 @@ const WorkspaceScreen = () => {
         {id: 2, name: 'styles.css', content: '/* Your styles here */', language: 'css'},
     ]);
     const [activeFile, setActiveFile] = useState(files[0]);
+    const [editingFileId, setEditingFileId] = useState(null);
+    const [editingFileName, setEditingFileName] = useState('');
 
     const createNewFile = () => {
         const newFile = {
@@ -36,6 +38,27 @@ const WorkspaceScreen = () => {
         );
         setFiles(updatedFiles);
         setActiveFile({...activeFile, content});
+    };
+
+    const startRenaming = (file, e) => {
+        e.stopPropagation();
+        setEditingFileId(file.id);
+        setEditingFileName(file.name);
+    };
+
+    const handleRename = (e) => {
+        if (e.key === 'Enter') {
+            const updatedFiles = files.map(f =>
+                f.id === editingFileId ? {...f, name: editingFileName} : f
+            );
+            setFiles(updatedFiles);
+            if (activeFile?.id === editingFileId) {
+                setActiveFile({...activeFile, name: editingFileName});
+            }
+            setEditingFileId(null);
+        } else if (e.key === 'Escape') {
+            setEditingFileId(null);
+        }
     };
 
     return (
@@ -69,7 +92,24 @@ const WorkspaceScreen = () => {
                             >
                                 <div className="file-item-content">
                                     <span className="file-icon">📄</span>
-                                    <span className="file-name">{file.name}</span>
+                                    {editingFileId === file.id ? (
+                                        <input
+                                            type="text"
+                                            value={editingFileName}
+                                            onChange={(e) => setEditingFileName(e.target.value)}
+                                            onKeyDown={handleRename}
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="file-name-input"
+                                            autoFocus
+                                        />
+                                    ) : (
+                                        <span
+                                            className="file-name"
+                                            onDoubleClick={(e) => startRenaming(file, e)}
+                                        >
+                                            {file.name}
+                                        </span>
+                                    )}
                                 </div>
                                 <button
                                     onClick={(e) => deleteFile(file.id, e)}
