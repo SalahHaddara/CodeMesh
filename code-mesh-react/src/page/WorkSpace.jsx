@@ -19,6 +19,7 @@ const WorkspaceScreen = () => {
         setActiveFile(newFile);
     };
 
+
     const updateFileContent = (content) => {
         const updatedFiles = files.map(f =>
             f.id === activeFile.id ? {...f, content} : f
@@ -53,12 +54,19 @@ const WorkspaceScreen = () => {
                         {files.map(file => (
                             <div
                                 key={file.id}
-                                onClick={() =>
-                                    setActiveFile(file)
-                                }
+                                onClick={() => setActiveFile(file)}
                                 className={`file-item ${activeFile?.id === file.id ? 'active' : ''}`}
                             >
-                                {file.name}
+                                <div className="file-item-content">
+                                    <span className="file-icon">📄</span>
+                                    <span className="file-name">{file.name}</span>
+                                </div>
+                                <button
+                                    onClick={(e) => deleteFile(file.id, e)}
+                                    className="delete-file-button"
+                                >
+                                    ×
+                                </button>
                             </div>
                         ))}
                     </div>
