@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import './../styles/pages/workspace.css';
+import {Box} from "@chakra-ui/react"
+import {Editor} from "@monaco-editor/react";
 
 const WorkspaceScreen = () => {
     const [files, setFiles] = useState([
@@ -124,11 +126,17 @@ const WorkspaceScreen = () => {
 
                 {/* Code Editor Area */}
                 <div className="editor-area">
-                    <textarea
-                        value={activeFile?.content}
-                        onChange={(e) => updateFileContent(e.target.value)}
-                        className="code-editor"
-                        placeholder="Start coding..."
+
+                    <Editor
+                        height="90vh"
+                        language={activeFile?.language}
+                        value={activeFile?.content || ""}
+                        onChange={(value) => updateFileContent(value)}
+                        theme="vs-light"
+                        options={{
+                            fontSize: 14,
+                            automaticLayout: true,
+                        }}
                     />
                 </div>
             </div>
