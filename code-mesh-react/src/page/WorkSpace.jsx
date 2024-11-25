@@ -19,6 +19,16 @@ const WorkspaceScreen = () => {
         setActiveFile(newFile);
     };
 
+    const deleteFile = (fileId, e) => {
+        if (e) {
+            e.stopPropagation();
+        }
+        const updatedFiles = files.filter(f => f.id !== fileId);
+        setFiles(updatedFiles);
+        if (activeFile.id === fileId) {
+            setActiveFile(updatedFiles[0] || null);
+        }
+    };
 
     const updateFileContent = (content) => {
         const updatedFiles = files.map(f =>
