@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Support\Facades\File;
 
 class AuthController extends Controller
 {
@@ -22,11 +23,15 @@ class AuthController extends Controller
         if($validator->fails()){
             return response()->json($validator->errors()->toJson(), 400);
         }
+        
+        $folder_name = preg_replace('/\s+/', '_', $request->name).rand();
+        File::makeDirectory(public_path($folder_name), 0777, true);
 
         $user = User::create([
             'name' => $request->get('name'),
             'email' => $request->get('email'),
             'password' => Hash::make($request->get('password')),
+            'base_folder' => $folder_name,
         ]);
 
         $token = JWTAuth::fromUser($user);
