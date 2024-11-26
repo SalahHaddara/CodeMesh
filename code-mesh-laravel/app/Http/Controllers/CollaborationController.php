@@ -97,4 +97,23 @@ class CollaborationController extends Controller
             'collaboration' => $collaboration
         ]);
     }
+
+    public function destroy($id)
+    {
+        $collaboration = Collaboration::findOrFail($id);
+
+        if ($collaboration->owner_id !== Auth::id()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        $collaboration->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Collaboration deleted successfully'
+        ]);
+    }
 }
