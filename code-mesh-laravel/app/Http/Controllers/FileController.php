@@ -65,5 +65,31 @@ class FileController extends Controller
             'content' => $content
         ]);
     }
+
+    public function update(Request $request, $id)
+    {
+        $file = File::findOrFail($id);
+
+        if ($file->user_id !== Auth::id()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+        $validator = Validator::make($request->all(), [
+            'content' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        Storage::put($file->file_path, $request->content);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'File updated successfully'
+        ]);
+    }
 }
 
