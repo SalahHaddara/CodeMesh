@@ -30,4 +30,10 @@ class EditFile implements ShouldBroadcast
     {
         return new Channel('file.' . $this->file_id);
     }
+    
+    public function broadcastAs()
+    {
+        return 'EditFile';
+    }
+
 }
