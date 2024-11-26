@@ -46,5 +46,24 @@ class FileController extends Controller
             'file' => $file
         ], 201);
     }
+
+    public function show($id)
+    {
+        $file = File::findOrFail($id);
+
+        if ($file->user_id !== Auth::id()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        $content = Storage::get($file->file_path);
+        return response()->json([
+            'status' => 'success',
+            'file' => $file,
+            'content' => $content
+        ]);
+    }
 }
 
