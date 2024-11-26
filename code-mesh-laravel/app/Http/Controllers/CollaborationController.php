@@ -68,5 +68,33 @@ class CollaborationController extends Controller
         ], 201);
     }
 
+    public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'role' => 'required|in:viewer,editor,admin'
+        ]);
 
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        $collaboration = Collaboration::findOrFail($id);
+
+        if ($collaboration->owner_id !== Auth::id()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        $collaboration->update([
+            'role' => $request->role
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Collaboration role updated successfully',
+            'collaboration' => $collaboration
+        ]);
+    }
 }
