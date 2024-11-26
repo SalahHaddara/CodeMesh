@@ -28,13 +28,13 @@ Route::middleware(JWTMiddleware::class)->group(function () {
     //Collaborations Routes
     Route::prefix('collaborations')->group(function () {
         // List all collaborations (both as owner and collaborator)
-        Route::get('/collaborations', [CollaborationController::class, 'index']);
+        Route::get('/', [CollaborationController::class, 'index']);
         // Create new collaboration
-        Route::post('/collaborations', [CollaborationController::class, 'store']);
+        Route::post('/', [CollaborationController::class, 'store']);
         // Update collaboration role
-        Route::put('/collaborations/{id}', [CollaborationController::class, 'update']);
+        Route::put('/{id}', [CollaborationController::class, 'update']);
         // Delete collaboration
-        Route::delete('/collaborations/{id}', [CollaborationController::class, 'destroy']);
+        Route::delete('/{id}', [CollaborationController::class, 'destroy']);
     });
 
 });
