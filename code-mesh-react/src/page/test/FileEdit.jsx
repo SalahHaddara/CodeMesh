@@ -28,13 +28,13 @@ const FileEdit = () => {
 
         getFileData();
         Pusher.logToConsole = true;//
-        const pusher = new Pusher('', {
-          cluster: '',
+        const pusher = new Pusher('221829f3a57f7bf42126', {
+          cluster: 'eu',
           encrypted: true,
         });
       
         const channel = pusher.subscribe(`file.${fileId}`);
-        channel.bind('', (data) => {
+        channel.bind('EditFile', (data) => {
           console.log('Received event data:', data);
           setContent(data.content);
         });
