@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CollaborationController;
 use App\Http\Controllers\FileController;
 use App\Http\Middleware\JWTMiddleware;
 use Illuminate\Http\Request;
@@ -23,4 +24,17 @@ Route::middleware(JWTMiddleware::class)->group(function () {
         // Delete file
         Route::delete('/{file}', [FileController::class, 'destroy']);
     });
+
+    //Collaborations Routes
+    Route::prefix('collaborations')->group(function () {
+        // List all collaborations (both as owner and collaborator)
+        Route::get('/collaborations', [CollaborationController::class, 'index']);
+        // Create new collaboration
+        Route::post('/collaborations', [CollaborationController::class, 'store']);
+        // Update collaboration role
+        Route::put('/collaborations/{id}', [CollaborationController::class, 'update']);
+        // Delete collaboration
+        Route::delete('/collaborations/{id}', [CollaborationController::class, 'destroy']);
+    });
+
 });
