@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { requestAPI } from '../../utlis/request.js'
 
 const FileEdit = () => {
+    const fileId = '398756639';
+    const filePath = 'yousif_mohammed_dahabra398756639/file.txt';
     const [content, setContent] = useState('');
     const getFileData = async () => {
         try {
@@ -21,7 +23,12 @@ const FileEdit = () => {
           console.error("Error in getFileData:", error);
         }
       };
+      useEffect(() => {
+
+        getFileData();
+        
     
+      }, []);
     return (
         <div>
         <h2>Editing: {filePath}</h2>
