@@ -17,5 +17,11 @@ class TestFileController extends Controller
 
         return response()->json(['success' => true]);
     }
+    public function get_file_content(Request $request)
+    {
+        $file_path ='yousif_mohammed_dahabra398756639/file.txt';
+        $content = file_get_contents(public_path($file_path));
+        return response()->json(['success' => true,'content'=>$content ]);
+    }
 
 }
