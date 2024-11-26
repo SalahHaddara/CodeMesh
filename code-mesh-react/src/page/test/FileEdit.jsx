@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { requestAPI } from '../../utlis/request.js'
+import Pusher from 'pusher-js';
 
 const FileEdit = () => {
     const fileId = '398756639';
@@ -26,9 +27,25 @@ const FileEdit = () => {
       useEffect(() => {
 
         getFileData();
-        
+        Pusher.logToConsole = true;//
+        const pusher = new Pusher('', {
+          cluster: '',
+          encrypted: true,
+        });
+      
+        const channel = pusher.subscribe(`file.${fileId}`);
+        channel.bind('', (data) => {
+          console.log('Received event data:', data);
+          setContent(data.content);
+        });
+      
+        return () => {
+          channel.unbind_all();
+          channel.unsubscribe();
+        };
+      
     
-      }, []);
+      }, [filePath]);
     return (
         <div>
         <h2>Editing: {filePath}</h2>
