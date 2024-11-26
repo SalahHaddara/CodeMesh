@@ -10,16 +10,19 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class EditFile
+class EditFile implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct()
+    public $file_path;
+    public $content;
+    public $file_id;
+
+    public function __construct($file_path, $content, $file_id = 398756639)
     {
-        //
+        $this->file_path = $file_path;
+        $this->content = $content;
+        $this->file_id = $file_id;
     }
 
     /**
