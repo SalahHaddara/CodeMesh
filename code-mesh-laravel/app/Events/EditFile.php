@@ -25,15 +25,9 @@ class EditFile implements ShouldBroadcast
         $this->file_id = $file_id;
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
-    public function broadcastOn(): array
+
+    public function broadcastOn()
     {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
+        return new Channel('file.' . $this->file_id);
     }
 }
