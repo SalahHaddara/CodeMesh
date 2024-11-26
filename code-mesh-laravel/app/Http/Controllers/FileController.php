@@ -91,5 +91,25 @@ class FileController extends Controller
             'message' => 'File updated successfully'
         ]);
     }
+
+    public function destroy($id)
+    {
+        $file = File::findOrFail($id);
+
+        if ($file->user_id !== Auth::id()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        Storage::delete($file->file_path);
+        $file->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'File deleted successfully'
+        ]);
+    }
 }
 
