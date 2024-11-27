@@ -13,6 +13,7 @@ class InvitationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $details;
     /**
      * Create a new message instance.
      */
@@ -20,37 +21,12 @@ class InvitationMail extends Mailable
         $this->details = $details;
     }
 
-    /**
-     * Get the message envelope.
-     */
     public function build() {
         return $this->subject('Invitation to Our Event')
-                    ->view('emails.invitation');
+                    ->view('invite');
     }
-    public function envelope(): Envelope
-    {
-        return new Envelope(
-            subject: 'Invitation Mail',
-        );
-    }
+    
 
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'view.name',
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
-    }
+    
+    
 }
