@@ -19,6 +19,28 @@ const WorkspaceScreen = () => {
 
     useEffect(() => {
         fetchFiles();
+        if(activeFile){
+            Pusher.logToConsole = true;//
+            const pusher = new Pusher('221829f3a57f7bf42126', {
+            cluster: 'eu',
+            encrypted: true,
+            });
+        
+            const channel = pusher.subscribe(`file.${fileId}`);
+            channel.bind('EditFile', (data) => {
+            console.log('Received event data:', data);
+            setContent(data.content);
+            });
+        
+            return () => {
+            channel.unbind_all();
+            channel.unsubscribe();
+            };
+        }
+    
+
+
+
     }, [fetchFiles]);
 
     const handleCreateNewFile = async () => {
