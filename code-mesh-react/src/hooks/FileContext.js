@@ -93,6 +93,38 @@ export const FileProvider = ({children}) => {
         }
     };
 
+    const deleteFile = async (fileId) => {
+        setLoading(true);
+        try {
+            const response = await requestAPI({
+                route: `files/${fileId}`,
+                method: 'DELETE'
+            });
+
+            if (response.success) {
+                setFiles(prev => prev.filter(f => f.id !== fileId));
+                if (activeFile?.id === fileId) {
+                    const remainingFiles = files.filter(f => f.id !== fileId);
+                    if (remainingFiles.length > 0) {
+                        const firstFile = remainingFiles[0];
+                        const content = await fetchFileContent(firstFile.id);
+                        setActiveFile({...firstFile, content});
+                    } else {
+                        setActiveFile(null);
+                    }
+                }
+                return true;
+            } else {
+                setError(response.message);
+                return false;
+            }
+        } catch (err) {
+            setError(`Failed to delete file: ${err}`);
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const value = {
         files,
