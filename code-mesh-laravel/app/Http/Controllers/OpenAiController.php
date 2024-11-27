@@ -20,12 +20,17 @@ class OpenAiController extends Controller
         ])->post('https://api.openai.com/v1/chat/completions', [
             'model' => 'gpt-4',
             'messages' => [
-                ['role' => 'system', 'content' => 'You are a code compiler assistant.'],
-                ['role' => 'user', 'content' => "the result must be so brief and summarized, like 
-                        [line nb, word nb] 
-                        Error nb 1:...
-                        Summary:...(small summary about the error)
-                        Soultion:(small solution to fix the code            
+                ['role' => 'system', 'content' => 'You are a code compiler.'],
+                ['role' => 'user', 'content' => "without any information or explanation, return a json object that contains:
+                    result: exectution output of the code,
+                    status: successfuly executioned or error (with it's type, be brief),
+                    (if there was an error):
+                        [line nb, character nb] (i want to take them as an (x,y)),
+                        solution: a brief steps to help the code runs(like if there is missing syntax just say add this character(and this character should be at the (x,y) you wrote before),
+
+                
+                
+                
                 " . $code],
             ],
         ]);
