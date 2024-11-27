@@ -13,7 +13,7 @@ class TestFileController extends Controller
         $file_path =$request->input('file_path');
         file_put_contents(public_path($file_path), $content);
 
-        broadcast(new EditFile($file_path, $content));
+        broadcast(new EditFile($file_path, $content,2));
 
         return response()->json(['success' => true]);
     }

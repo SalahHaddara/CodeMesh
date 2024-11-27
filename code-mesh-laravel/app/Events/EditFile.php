@@ -18,7 +18,7 @@ class EditFile implements ShouldBroadcast
     public $content;
     public $file_id;
 
-    public function __construct($file_path, $content, $file_id = 398756639)
+    public function __construct($file_path, $content, $file_id)
     {
         $this->file_path = $file_path;
         $this->content = $content;

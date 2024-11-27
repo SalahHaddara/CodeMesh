@@ -2,6 +2,7 @@ import React from 'react';
 import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 import {FileProvider} from "./hooks/FileContext.jsx";
 import Login from './page/Login';
+import Signup from './page/Signup';
 import WorkspaceScreen from "./page/WorkSpace.jsx";
 
 const ProtectedRoute = ({children}) => {
@@ -19,6 +20,7 @@ function App() {
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<Login/>}/>
+                <Route path="/signup" element={<Signup/>}/>
                 <Route
                     path="/workspace"
                     element={

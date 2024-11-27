@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import '../styles/pages/login.css';
 import useForm from "../hooks/useForm.js";
 import { requestAPI } from '../utlis/request.js'
+import {useNavigate} from "react-router-dom";
 
 const Signup = () => {
+    const navigate = useNavigate();
+
     localStorage.clear();
     const [error, setError] = useState("");
+    const [succ, setSucc] = useState("");
     
     const { form, updateForm } = useForm({
         email: "",
@@ -17,12 +21,19 @@ const Signup = () => {
             method:"POST",
             body:form,
         })
+        console.log(result)
 
         if(result.success){
-            localStorage.setItem('token',result.token)
-            localStorage.setItem('user',JSON.stringify(result.user))
+            localStorage.setItem('token',result.data.token)
+            localStorage.setItem('user',JSON.stringify(result.data.user))
+            console.log(result.data.token)
+
+            setError('')
+            setSucc('Your account has been successfully created')
+            navigate('/workspace')
         }else{
             setError(result.message)
+            setSucc('')
         }
     } 
     
@@ -33,6 +44,7 @@ const Signup = () => {
 
                 <h1>CodeMesh</h1>
                 {error && <h2 className="alert">{error}</h2>}
+                {succ && <h2 className="alert-succ">{succ}</h2>}
 
                     <div className="login-form">
                         <div>
@@ -54,7 +66,12 @@ const Signup = () => {
                         <div>
                             <button onClick={signup}>Sign UP</button>
                             <br/>
-                            <a href="#">Login</a>
+                            <a 
+                                                    onClick={() => {
+                                                        navigate("/login");
+                                                    }}
+                            
+                            >Login</a>
                         </div>
                     </div>
                 </div>

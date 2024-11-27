@@ -53,7 +53,11 @@ const Login = () => {
                     <div>
                         <button onClick={login}>Sign in</button>
                         <br/>
-                        <a href="#">Sign up</a>
+                        <a href="#" 
+                        onClick={() => {
+                            navigate("/signup");
+                        }}
+                        >Sign up</a>
                     </div>
                 </div>
             </div>
