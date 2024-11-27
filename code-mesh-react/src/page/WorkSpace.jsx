@@ -33,13 +33,15 @@ const WorkspaceScreen = () => {
         await deleteFile(fileId);
     };
 
-    const updateFileContent = (content) => {
-        const updatedFiles = files.map(f =>
-            f.id === activeFile.id ? {...f, content} : f
-        );
-        setFiles(updatedFiles);
-        setActiveFile({...activeFile, content});
+    const handleUpdateContent = async (content) => {
+        if (activeFile) {
+            await updateFileContent(activeFile.id, content);
+        }
     };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     const startRenaming = (file, e) => {
         e.stopPropagation();
