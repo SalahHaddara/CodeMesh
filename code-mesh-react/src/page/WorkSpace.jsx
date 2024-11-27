@@ -1,71 +1,76 @@
-import React, {useState} from 'react';
+import React, {useEffect} from 'react';
 import './../styles/pages/workspace.css';
-import {Box} from "@chakra-ui/react"
 import {Editor} from "@monaco-editor/react";
+import {useFiles} from "../hooks/FileContext.jsx";
 
 const WorkspaceScreen = () => {
-    const [files, setFiles] = useState([
-        {id: 1, name: 'main.js', content: '// Your code here', language: 'javascript'},
-        {id: 2, name: 'styles.css', content: '/* Your styles here */', language: 'css'},
-    ]);
-    const [activeFile, setActiveFile] = useState(files[0]);
-    const [editingFileId, setEditingFileId] = useState(null);
-    const [editingFileName, setEditingFileName] = useState('');
+    const {
+        files,
+        activeFile,
+        loading,
+        error,
+        setActiveFileWithContent,
+        fetchFiles,
+        createFile,
+        deleteFile,
+        updateFileContent,
+        clearError
+    } = useFiles();
 
-    const createNewFile = () => {
-        const newFile = {
-            id: Date.now(),
-            name: `untitled-${files.length + 1}.js`,
-            content: '',
-            language: 'javascript'
-        };
-        setFiles([...files, newFile]);
-        setActiveFile(newFile);
+    useEffect(() => {
+        fetchFiles();
+    }, [fetchFiles]);
+
+    const handleCreateNewFile = async () => {
+        const newFileName = `untitled-${files.length + 1}.js`;
+        await createFile(newFileName, 'javascript');
     };
 
-    const deleteFile = (fileId, e) => {
+    const handleDeleteFile = async (fileId, e) => {
         if (e) {
             e.stopPropagation();
         }
-        const updatedFiles = files.filter(f => f.id !== fileId);
-        setFiles(updatedFiles);
-        if (activeFile.id === fileId) {
-            setActiveFile(updatedFiles[0] || null);
+        await deleteFile(fileId);
+    };
+
+    const handleUpdateContent = async (content) => {
+        if (activeFile) {
+            await updateFileContent(activeFile.id, content);
         }
     };
 
-    const updateFileContent = (content) => {
-        const updatedFiles = files.map(f =>
-            f.id === activeFile.id ? {...f, content} : f
-        );
-        setFiles(updatedFiles);
-        setActiveFile({...activeFile, content});
-    };
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
-    const startRenaming = (file, e) => {
-        e.stopPropagation();
-        setEditingFileId(file.id);
-        setEditingFileName(file.name);
-    };
-
-    const handleRename = (e) => {
-        if (e.key === 'Enter') {
-            const updatedFiles = files.map(f =>
-                f.id === editingFileId ? {...f, name: editingFileName} : f
-            );
-            setFiles(updatedFiles);
-            if (activeFile?.id === editingFileId) {
-                setActiveFile({...activeFile, name: editingFileName});
-            }
-            setEditingFileId(null);
-        } else if (e.key === 'Escape') {
-            setEditingFileId(null);
-        }
-    };
+    // const startRenaming = (file, e) => {
+    //     e.stopPropagation();
+    //     setEditingFileId(file.id);
+    //     setEditingFileName(file.name);
+    // };
+    //
+    // const handleRename = (e) => {
+    //     if (e.key === 'Enter') {
+    //         const updatedFiles = files.map(f =>
+    //             f.id === editingFileId ? {...f, name: editingFileName} : f
+    //         );
+    //         setFiles(updatedFiles);
+    //         if (activeFile?.id === editingFileId) {
+    //             setActiveFile({...activeFile, name: editingFileName});
+    //         }
+    //         setEditingFileId(null);
+    //     } else if (e.key === 'Escape') {
+    //         setEditingFileId(null);
+    //     }
+    // };
 
     return (
         <div className="workspace">
-            {/* Top Navigation */}
+            {error && (
+                <div className="error-banner" onClick={clearError}>
+                    {error}
+                </div>
+            )}
             <nav className="nav-bar">
                 <div className="nav-left">
                     <span className="nav-title">Code Editor</span>
@@ -78,43 +83,24 @@ const WorkspaceScreen = () => {
             </nav>
 
             <div className="main-content">
-                {/* Files */}
                 <div className="file-explorer">
                     <div className="file-explorer-content">
                         <div className="file-explorer-header">
                             <span className="section-title">Files</span>
-                            <button className={"new-file-button"} onClick={createNewFile}>+</button>
-
+                            <button className="new-file-button" onClick={handleCreateNewFile}>+</button>
                         </div>
                         {files.map(file => (
                             <div
                                 key={file.id}
-                                onClick={() => setActiveFile(file)}
+                                onClick={() => setActiveFileWithContent(file)}
                                 className={`file-item ${activeFile?.id === file.id ? 'active' : ''}`}
                             >
                                 <div className="file-item-content">
                                     <span className="file-icon">📄</span>
-                                    {editingFileId === file.id ? (
-                                        <input
-                                            type="text"
-                                            value={editingFileName}
-                                            onChange={(e) => setEditingFileName(e.target.value)}
-                                            onKeyDown={handleRename}
-                                            onClick={(e) => e.stopPropagation()}
-                                            className="file-name-input"
-                                            autoFocus
-                                        />
-                                    ) : (
-                                        <span
-                                            className="file-name"
-                                            onDoubleClick={(e) => startRenaming(file, e)}
-                                        >
-                                            {file.name}
-                                        </span>
-                                    )}
+                                    <span className="file-name">{file.name}</span>
                                 </div>
                                 <button
-                                    onClick={(e) => deleteFile(file.id, e)}
+                                    onClick={(e) => handleDeleteFile(file.id, e)}
                                     className="delete-file-button"
                                 >
                                     ×
@@ -124,14 +110,12 @@ const WorkspaceScreen = () => {
                     </div>
                 </div>
 
-                {/* Code Editor Area */}
                 <div className="editor-area">
-
                     <Editor
                         height="90vh"
                         language={activeFile?.language}
                         value={activeFile?.content || ""}
-                        onChange={(value) => updateFileContent(value)}
+                        onChange={handleUpdateContent}
                         theme="vs-light"
                         options={{
                             fontSize: 14,
