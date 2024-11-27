@@ -1,9 +1,12 @@
-import React, {useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import './../styles/pages/workspace.css';
 import {Editor} from "@monaco-editor/react";
 import {useFiles} from "../hooks/FileContext.jsx";
+import Pusher from 'pusher-js';
 
 const WorkspaceScreen = () => {
+    const [content, setContent] = useState('');
+
     const {
         files,
         activeFile,
@@ -19,19 +22,20 @@ const WorkspaceScreen = () => {
 
     useEffect(() => {
         fetchFiles();
+    }, [fetchFiles]);
+    useEffect(() => {
         if(activeFile){
-            Pusher.logToConsole = true;//
+            setContent(activeFile.content || '');
             const pusher = new Pusher('221829f3a57f7bf42126', {
             cluster: 'eu',
             encrypted: true,
             });
-        
-            const channel = pusher.subscribe(`file.${fileId}`);
+            
+            const channel = pusher.subscribe(`file.${activeFile.id}`);
             channel.bind('EditFile', (data) => {
-            console.log('Received event data:', data);
             setContent(data.content);
             });
-        
+         
             return () => {
             channel.unbind_all();
             channel.unsubscribe();
@@ -41,7 +45,7 @@ const WorkspaceScreen = () => {
 
 
 
-    }, [fetchFiles]);
+    }, [activeFile]);
 
     const handleCreateNewFile = async () => {
         const newFileName = `untitled-${files.length + 1}.js`;
@@ -136,7 +140,7 @@ const WorkspaceScreen = () => {
                     <Editor
                         height="90vh"
                         language={activeFile?.language}
-                        value={activeFile?.content || ""}
+                        value={content}
                         onChange={handleUpdateContent}
                         theme="vs-light"
                         options={{
