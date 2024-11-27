@@ -21,15 +21,19 @@ const Signup = () => {
             method:"POST",
             body:form,
         })
+        console.log(result)
 
         if(result.success){
             localStorage.setItem('token',result.data.token)
             localStorage.setItem('user',JSON.stringify(result.data.user))
+            console.log(result.data.token)
+
+            setError('')
             setSucc('Your account has been successfully created')
-            console.log(result)
-            // navigate('/workspace')
+            navigate('/workspace')
         }else{
             setError(result.message)
+            setSucc('')
         }
     } 
     
