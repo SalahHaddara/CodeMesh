@@ -8,7 +8,7 @@ use App\Mail\InvitationMail;
 
 class MailController extends Controller
 {
-    public function sendInvitation()
+    public function sendInvitation(Request $request)
     {
         $request->validate([
             'email' => 'required|email', 

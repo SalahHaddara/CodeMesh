@@ -1,9 +1,10 @@
 import Compiler from "./page/Compile"
+import Mailer from "./page/MailInvitation"
 function App() {
 
     return (
         <>
-        <Compiler/>
+        <Mailer/>
         </>
     )
 }
