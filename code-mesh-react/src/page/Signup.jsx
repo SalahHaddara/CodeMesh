@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import '../styles/pages/login.css';
 import useForm from "../hooks/useForm.js";
 import { requestAPI } from '../utlis/request.js'
+import {useNavigate} from "react-router-dom";
 
 const Signup = () => {
+    const navigate = useNavigate();
+
     localStorage.clear();
     const [error, setError] = useState("");
     
@@ -54,7 +57,12 @@ const Signup = () => {
                         <div>
                             <button onClick={signup}>Sign UP</button>
                             <br/>
-                            <a href="#">Login</a>
+                            <a href="#"
+                                                    onClick={() => {
+                                                        navigate("/login");
+                                                    }}
+                            
+                            >Login</a>
                         </div>
                     </div>
                 </div>
