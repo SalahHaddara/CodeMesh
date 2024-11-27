@@ -39,4 +39,40 @@ export const FileProvider = ({children}) => {
             setLoading(false);
         }
     }, [activeFile]);
+
+    const fetchFileContent = async (fileId) => {
+        try {
+            const response = await requestAPI({
+                route: `files/${fileId}`,
+                method: 'GET'
+            });
+
+            if (response.success) {
+                return response.data.content;
+            }
+            return '';
+        } catch (err) {
+            console.error(`Failed to fetch file content: ${err}`);
+            return '';
+        }
+    };
+
+    const value = {
+        files,
+        activeFile,
+        loading,
+        error,
+        setActiveFileWithContent,
+        fetchFiles,
+        createFile,
+        deleteFile,
+        updateFileContent,
+        clearError: () => setError(null)
+    };
+
+    return (
+        <FileContext.Provider value={value}>
+            {children}
+        </FileContext.Provider>
+    );
 }
