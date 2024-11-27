@@ -126,6 +126,38 @@ export const FileProvider = ({children}) => {
         }
     };
 
+    const updateFileContent = async (fileId, content) => {
+        try {
+            const response = await requestAPI({
+                route: `files/${fileId}`,
+                method: 'PUT',
+                body: {content}
+            });
+
+            if (response.success) {
+                if (activeFile?.id === fileId) {
+                    setActiveFile(prev => ({...prev, content}));
+                }
+                return true;
+            } else {
+                setError(response.message);
+                return false;
+            }
+        } catch (err) {
+            setError(`Failed to update file: ${err}`);
+            return false;
+        }
+    };
+
+    const setActiveFileWithContent = async (file) => {
+        try {
+            const content = await fetchFileContent(file.id);
+            setActiveFile({...file, content});
+        } catch (err) {
+            setError(`Failed to fetch file content: ${err}`);
+        }
+    };
+
     const value = {
         files,
         activeFile,
