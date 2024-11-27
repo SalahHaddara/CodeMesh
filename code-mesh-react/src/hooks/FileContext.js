@@ -1,4 +1,4 @@
-import React, {createContext, useCallback, useState} from 'react';
+import React, {createContext, useCallback, useContext, useState} from 'react';
 import {requestAPI} from "../utlis/request.js";
 
 const FileContext = createContext();
@@ -57,6 +57,43 @@ export const FileProvider = ({children}) => {
         }
     };
 
+    const createFile = async (fileName, language = 'javascript') => {
+        setLoading(true);
+        try {
+            const response = await requestAPI({
+                route: 'files',
+                method: 'POST',
+                body: {
+                    name: fileName,
+                    content: '',
+                    language: language
+                }
+            });
+
+            if (response.success) {
+                const newFile = {
+                    id: response.data.file.id,
+                    name: response.data.file.name,
+                    content: '',
+                    language: response.data.file.language,
+                    path: response.data.file.file_path
+                };
+                setFiles(prev => [...prev, newFile]);
+                setActiveFile(newFile);
+                return newFile;
+            } else {
+                setError(response.message);
+                return null;
+            }
+        } catch (err) {
+            setError(`Failed to create file: ${err}`);
+            return null;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     const value = {
         files,
         activeFile,
@@ -76,3 +113,11 @@ export const FileProvider = ({children}) => {
         </FileContext.Provider>
     );
 }
+
+export const useFiles = () => {
+    const context = useContext(FileContext);
+    if (!context) {
+        throw new Error('useFiles must be used within a FileProvider');
+    }
+    return context;
+};
