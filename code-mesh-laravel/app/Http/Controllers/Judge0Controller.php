@@ -14,7 +14,7 @@ class Judge0Controller extends Controller
     }
 
     public function index() {
-        return view('compiler.index');
+        return view('index');
     }
 
     public function compile(Request $request) {
