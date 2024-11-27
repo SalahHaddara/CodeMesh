@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import './../styles/pages/workspace.css';
 import {Editor} from "@monaco-editor/react";
-import {useFiles} from "../hooks/FileContext.js";
+import {useFiles} from "../hooks/FileContext.jsx";
 
 const WorkspaceScreen = () => {
     const {
