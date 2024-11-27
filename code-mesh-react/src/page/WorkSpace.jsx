@@ -26,15 +26,11 @@ const WorkspaceScreen = () => {
         await createFile(newFileName, 'javascript');
     };
 
-    const deleteFile = (fileId, e) => {
+    const handleDeleteFile = async (fileId, e) => {
         if (e) {
             e.stopPropagation();
         }
-        const updatedFiles = files.filter(f => f.id !== fileId);
-        setFiles(updatedFiles);
-        if (activeFile.id === fileId) {
-            setActiveFile(updatedFiles[0] || null);
-        }
+        await deleteFile(fileId);
     };
 
     const updateFileContent = (content) => {
