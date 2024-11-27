@@ -24,7 +24,6 @@ class FileController extends Controller
             'content' => 'required|string',
             'language' => 'required|string',
         ]);
-
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
         }

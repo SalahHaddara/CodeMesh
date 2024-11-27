@@ -21,6 +21,7 @@ export const requestAPI = async ({route, method = 'GET', body, header = 'applica
         return {data: respons.data, success: true, message: "Request successful"};
 
     } catch (error) {
+        console.log(error)
         if (error.response) {
             if (error.response.status === 401) {
                 return {message: "Unauthorized access. Please log in again.", success: false};

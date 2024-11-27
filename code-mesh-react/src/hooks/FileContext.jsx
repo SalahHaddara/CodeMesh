@@ -1,174 +1,143 @@
-import React, {createContext, useCallback, useContext, useState} from 'react';
-import {requestAPI} from "../utlis/request.js";
+import React, {createContext, useContext, useCallback, useReducer, useEffect} from 'react';
+import {requestAPI} from './../utlis/request.js';
+import {debounce} from 'lodash';
+import {form} from "framer-motion/m";
 
-const FileContext = createContext();
+const FileContext = createContext(null);
 
-export const FileProvider = ({children}) => {
-    const [files, setFiles] = useState([]);
-    const [activeFile, setActiveFile] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+const initialState = {
+    files: [],
+    activeFile: null,
+    loading: false,
+    error: null,
+};
+
+function fileReducer(state, action) {
+    switch (action.type) {
+        case 'SET_FILES':
+            return {...state, files: action.payload, loading: false};
+        case 'SET_ACTIVE_FILE':
+            return {...state, activeFile: action.payload};
+        case 'UPDATE_FILE_CONTENT':
+            return {
+                ...state,
+                files: state.files.map(f =>
+                    f.id === action.payload.id
+                        ? {...f, content: action.payload.content}
+                        : f
+                ),
+                activeFile: state.activeFile?.id === action.payload.id
+                    ? {...state.activeFile, content: action.payload.content}
+                    : state.activeFile
+            };
+        case 'SET_LOADING':
+            return {...state, loading: action.payload};
+        case 'SET_ERROR':
+            return {...state, error: action.payload, loading: false};
+        case 'CLEAR_ERROR':
+            return {...state, error: null};
+        default:
+            return state;
+    }
+}
+
+export function FileProvider({children}) {
+    const [state, dispatch] = useReducer(fileReducer, initialState);
+
+    const debouncedUpdate = useCallback(
+        debounce(async (fileId, content) => {
+            try {
+                await requestAPI({
+                    route: `files/${fileId}`,
+                    method: 'PUT',
+                    body: {content}
+                });
+            } catch (error) {
+                dispatch({type: 'SET_ERROR', payload: 'Failed to save changes'});
+            }
+        }, 1000),
+        []
+    );
 
     const fetchFiles = useCallback(async () => {
-        setLoading(true);
-        try {
-            const response = await requestAPI({
-                route: 'files',
-                method: 'GET'
-            });
+        dispatch({type: 'SET_LOADING', payload: true});
+        const response = await requestAPI({route: 'files'});
+        if (response.success) {
+            dispatch({type: 'SET_FILES', payload: response.data.files});
+        } else {
+            dispatch({type: 'SET_ERROR', payload: response.message});
+        }
+    }, []);
 
+    const setActiveFileWithContent = useCallback(async (file) => {
+        if (!file.content) {
+            const response = await requestAPI({route: `files/${file.id}`});
             if (response.success) {
-                // Transform the files into our expected format
-                const formattedFiles = response.data.files.map(file => ({
-                    id: file.id,
-                    name: file.name,
-                    language: file.language,
-                    path: file.file_path
-                }));
-                setFiles(formattedFiles);
-
-                // If we have files but no active file, set the first one
-                if (formattedFiles.length > 0 && !activeFile) {
-                    const firstFileContent = await fetchFileContent(formattedFiles[0].id);
-                    setActiveFile({...formattedFiles[0], content: firstFileContent});
-                }
+                dispatch({
+                    type: 'SET_ACTIVE_FILE',
+                    payload: {...file, content: response.data.content}
+                });
             }
-        } catch (err) {
-            setError(`Failed to fetch files: ${err}`);
-        } finally {
-            setLoading(false);
+        } else {
+            dispatch({type: 'SET_ACTIVE_FILE', payload: file});
         }
-    }, [activeFile]);
+    }, []);
 
-    const fetchFileContent = async (fileId) => {
-        try {
-            const response = await requestAPI({
-                route: `files/${fileId}`,
-                method: 'GET'
-            });
 
-            if (response.success) {
-                return response.data.content;
+    const createFile = useCallback(async (name, language) => {
+        console.log(name, language);
+        const response = await requestAPI({
+            route: 'files',
+            method: 'POST',
+            body: {name, content: 'Hello', language}
+        });
+
+        if (response.success) {
+            await fetchFiles();
+            setActiveFileWithContent(response.data.file);
+        } else {
+            dispatch({type: 'SET_ERROR', payload: response.message});
+        }
+    }, [fetchFiles, setActiveFileWithContent]);
+
+
+    const deleteFile = useCallback(async (fileId) => {
+        const response = await requestAPI({
+            route: `files/${fileId}`,
+            method: 'DELETE'
+        });
+
+        if (response.success) {
+            if (state.activeFile?.id === fileId) {
+                dispatch({type: 'SET_ACTIVE_FILE', payload: null});
             }
-            return '';
-        } catch (err) {
-            console.error(`Failed to fetch file content: ${err}`);
-            return '';
+            await fetchFiles();
+        } else {
+            dispatch({type: 'SET_ERROR', payload: response.message});
         }
-    };
+    }, [fetchFiles, state.activeFile]);
 
-    const createFile = async (fileName, language = 'javascript') => {
-        setLoading(true);
-        try {
-            const response = await requestAPI({
-                route: 'files',
-                method: 'POST',
-                body: {
-                    name: fileName,
-                    content: '',
-                    language: language
-                }
-            });
+    const updateFileContent = useCallback((fileId, content) => {
+        dispatch({type: 'UPDATE_FILE_CONTENT', payload: {id: fileId, content}});
+        debouncedUpdate(fileId, content);
+    }, [debouncedUpdate]);
 
-            if (response.success) {
-                const newFile = {
-                    id: response.data.file.id,
-                    name: response.data.file.name,
-                    content: '',
-                    language: response.data.file.language,
-                    path: response.data.file.file_path
-                };
-                setFiles(prev => [...prev, newFile]);
-                setActiveFile(newFile);
-                return newFile;
-            } else {
-                setError(response.message);
-                return null;
-            }
-        } catch (err) {
-            setError(`Failed to create file: ${err}`);
-            return null;
-        } finally {
-            setLoading(false);
-        }
-    };
+    const clearError = useCallback(() => {
+        dispatch({type: 'CLEAR_ERROR'});
+    }, []);
 
-    const deleteFile = async (fileId) => {
-        setLoading(true);
-        try {
-            const response = await requestAPI({
-                route: `files/${fileId}`,
-                method: 'DELETE'
-            });
-
-            if (response.success) {
-                setFiles(prev => prev.filter(f => f.id !== fileId));
-                if (activeFile?.id === fileId) {
-                    const remainingFiles = files.filter(f => f.id !== fileId);
-                    if (remainingFiles.length > 0) {
-                        const firstFile = remainingFiles[0];
-                        const content = await fetchFileContent(firstFile.id);
-                        setActiveFile({...firstFile, content});
-                    } else {
-                        setActiveFile(null);
-                    }
-                }
-                return true;
-            } else {
-                setError(response.message);
-                return false;
-            }
-        } catch (err) {
-            setError(`Failed to delete file: ${err}`);
-            return false;
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const updateFileContent = async (fileId, content) => {
-        try {
-            const response = await requestAPI({
-                route: `files/${fileId}`,
-                method: 'PUT',
-                body: {content}
-            });
-
-            if (response.success) {
-                if (activeFile?.id === fileId) {
-                    setActiveFile(prev => ({...prev, content}));
-                }
-                return true;
-            } else {
-                setError(response.message);
-                return false;
-            }
-        } catch (err) {
-            setError(`Failed to update file: ${err}`);
-            return false;
-        }
-    };
-
-    const setActiveFileWithContent = async (file) => {
-        try {
-            const content = await fetchFileContent(file.id);
-            setActiveFile({...file, content});
-        } catch (err) {
-            setError(`Failed to fetch file content: ${err}`);
-        }
-    };
+    useEffect(() => {
+        fetchFiles();
+    }, [fetchFiles]);
 
     const value = {
-        files,
-        activeFile,
-        loading,
-        error,
-        setActiveFileWithContent,
+        ...state,
         fetchFiles,
+        setActiveFileWithContent,
         createFile,
         deleteFile,
         updateFileContent,
-        clearError: () => setError(null)
+        clearError
     };
 
     return (

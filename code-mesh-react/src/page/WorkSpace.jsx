@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import './../styles/pages/workspace.css';
 import {Editor} from "@monaco-editor/react";
 import {useFiles} from "../hooks/FileContext.jsx";
@@ -19,6 +19,8 @@ const WorkspaceScreen = () => {
         updateFileContent,
         clearError
     } = useFiles();
+
+    const [newFileName, setNewFileName] = useState('');
 
     useEffect(() => {
         fetchFiles();
@@ -48,8 +50,26 @@ const WorkspaceScreen = () => {
     }, [activeFile]);
 
     const handleCreateNewFile = async () => {
-        const newFileName = `untitled-${files.length + 1}.js`;
-        await createFile(newFileName, 'javascript');
+        if (!newFileName.trim()) return;
+
+        const fileExtension = newFileName.split('.').pop();
+        const languageMap = {
+            'js': 'javascript',
+            'py': 'python',
+            'html': 'html',
+            'css': 'css',
+        };
+
+        const language = languageMap[fileExtension] || 'plaintext';
+
+        await createFile(newFileName, language);
+        setNewFileName('');
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleCreateNewFile();
+        }
     };
 
     const handleDeleteFile = async (fileId, e) => {
@@ -113,8 +133,19 @@ const WorkspaceScreen = () => {
                     <div className="file-explorer-content">
                         <div className="file-explorer-header">
                             <span className="section-title">Files</span>
+                        </div>
+                        <div className="new-file-input-container">
+                            <input
+                                type="text"
+                                value={newFileName}
+                                onChange={(e) => setNewFileName(e.target.value)}
+                                onKeyPress={handleKeyPress}
+                                placeholder="filename.js"
+                                className="new-file-input"
+                            />
                             <button className="new-file-button" onClick={handleCreateNewFile}>+</button>
                         </div>
+
                         {files.map(file => (
                             <div
                                 key={file.id}
