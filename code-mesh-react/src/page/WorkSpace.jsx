@@ -1,9 +1,26 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './../styles/pages/workspace.css';
-import {Box} from "@chakra-ui/react"
 import {Editor} from "@monaco-editor/react";
+import {useFiles} from "../hooks/FileContext.js";
 
 const WorkspaceScreen = () => {
+    const {
+        files,
+        activeFile,
+        loading,
+        error,
+        setActiveFileWithContent,
+        fetchFiles,
+        createFile,
+        deleteFile,
+        updateFileContent,
+        clearError
+    } = useFiles();
+
+    useEffect(() => {
+        fetchFiles();
+    }, [fetchFiles]);
+
     const [files, setFiles] = useState([
         {id: 1, name: 'main.js', content: '// Your code here', language: 'javascript'},
         {id: 2, name: 'styles.css', content: '/* Your styles here */', language: 'css'},
