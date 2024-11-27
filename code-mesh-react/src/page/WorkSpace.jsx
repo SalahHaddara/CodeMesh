@@ -17,6 +17,8 @@ const WorkspaceScreen = () => {
         clearError
     } = useFiles();
 
+    const [newFileName, setNewFileName] = useState('');
+
     useEffect(() => {
         fetchFiles();
     }, [fetchFiles]);
