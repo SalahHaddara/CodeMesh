@@ -24,9 +24,22 @@ const WorkspaceScreen = () => {
     }, [fetchFiles]);
 
     const handleCreateNewFile = async () => {
-        const newFileName = `untitled-${files.length + 1}.js`;
-        await createFile(newFileName, 'javascript');
+        if (!newFileName.trim()) return;
+
+        const fileExtension = newFileName.split('.').pop();
+        const languageMap = {
+            'js': 'javascript',
+            'py': 'python',
+            'html': 'html',
+            'css': 'css',
+        };
+
+        const language = languageMap[fileExtension] || 'plaintext';
+
+        await createFile(newFileName, language);
+        setNewFileName('');
     };
+
 
     const handleDeleteFile = async (fileId, e) => {
         if (e) {
