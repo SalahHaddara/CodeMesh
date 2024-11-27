@@ -1,6 +1,7 @@
 import React, {createContext, useContext, useCallback, useReducer, useEffect} from 'react';
 import {requestAPI} from './../utlis/request.js';
 import {debounce} from 'lodash';
+import {form} from "framer-motion/m";
 
 const FileContext = createContext(null);
 
@@ -82,11 +83,13 @@ export function FileProvider({children}) {
         }
     }, []);
 
+
     const createFile = useCallback(async (name, language) => {
+        console.log(name, language);
         const response = await requestAPI({
             route: 'files',
             method: 'POST',
-            body: {name, content: '', language}
+            body: {name, content: 'Hello', language}
         });
 
         if (response.success) {
@@ -96,6 +99,7 @@ export function FileProvider({children}) {
             dispatch({type: 'SET_ERROR', payload: response.message});
         }
     }, [fetchFiles, setActiveFileWithContent]);
+
 
     const deleteFile = useCallback(async (fileId) => {
         const response = await requestAPI({

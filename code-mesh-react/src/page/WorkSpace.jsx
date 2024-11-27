@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './../styles/pages/workspace.css';
 import {Editor} from "@monaco-editor/react";
 import {useFiles} from "../hooks/FileContext.jsx";
@@ -40,6 +40,11 @@ const WorkspaceScreen = () => {
         setNewFileName('');
     };
 
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleCreateNewFile();
+        }
+    };
 
     const handleDeleteFile = async (fileId, e) => {
         if (e) {
@@ -102,8 +107,19 @@ const WorkspaceScreen = () => {
                     <div className="file-explorer-content">
                         <div className="file-explorer-header">
                             <span className="section-title">Files</span>
+                        </div>
+                        <div className="new-file-input-container">
+                            <input
+                                type="text"
+                                value={newFileName}
+                                onChange={(e) => setNewFileName(e.target.value)}
+                                onKeyPress={handleKeyPress}
+                                placeholder="filename.js"
+                                className="new-file-input"
+                            />
                             <button className="new-file-button" onClick={handleCreateNewFile}>+</button>
                         </div>
+
                         {files.map(file => (
                             <div
                                 key={file.id}
