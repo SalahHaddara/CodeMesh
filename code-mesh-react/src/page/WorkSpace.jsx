@@ -43,30 +43,34 @@ const WorkspaceScreen = () => {
         return <div>Loading...</div>;
     }
 
-    const startRenaming = (file, e) => {
-        e.stopPropagation();
-        setEditingFileId(file.id);
-        setEditingFileName(file.name);
-    };
-
-    const handleRename = (e) => {
-        if (e.key === 'Enter') {
-            const updatedFiles = files.map(f =>
-                f.id === editingFileId ? {...f, name: editingFileName} : f
-            );
-            setFiles(updatedFiles);
-            if (activeFile?.id === editingFileId) {
-                setActiveFile({...activeFile, name: editingFileName});
-            }
-            setEditingFileId(null);
-        } else if (e.key === 'Escape') {
-            setEditingFileId(null);
-        }
-    };
+    // const startRenaming = (file, e) => {
+    //     e.stopPropagation();
+    //     setEditingFileId(file.id);
+    //     setEditingFileName(file.name);
+    // };
+    //
+    // const handleRename = (e) => {
+    //     if (e.key === 'Enter') {
+    //         const updatedFiles = files.map(f =>
+    //             f.id === editingFileId ? {...f, name: editingFileName} : f
+    //         );
+    //         setFiles(updatedFiles);
+    //         if (activeFile?.id === editingFileId) {
+    //             setActiveFile({...activeFile, name: editingFileName});
+    //         }
+    //         setEditingFileId(null);
+    //     } else if (e.key === 'Escape') {
+    //         setEditingFileId(null);
+    //     }
+    // };
 
     return (
         <div className="workspace">
-            {/* Top Navigation */}
+            {error && (
+                <div className="error-banner" onClick={clearError}>
+                    {error}
+                </div>
+            )}
             <nav className="nav-bar">
                 <div className="nav-left">
                     <span className="nav-title">Code Editor</span>
@@ -79,43 +83,24 @@ const WorkspaceScreen = () => {
             </nav>
 
             <div className="main-content">
-                {/* Files */}
                 <div className="file-explorer">
                     <div className="file-explorer-content">
                         <div className="file-explorer-header">
                             <span className="section-title">Files</span>
-                            <button className={"new-file-button"} onClick={createNewFile}>+</button>
-
+                            <button className="new-file-button" onClick={handleCreateNewFile}>+</button>
                         </div>
                         {files.map(file => (
                             <div
                                 key={file.id}
-                                onClick={() => setActiveFile(file)}
+                                onClick={() => setActiveFileWithContent(file)}
                                 className={`file-item ${activeFile?.id === file.id ? 'active' : ''}`}
                             >
                                 <div className="file-item-content">
                                     <span className="file-icon">📄</span>
-                                    {editingFileId === file.id ? (
-                                        <input
-                                            type="text"
-                                            value={editingFileName}
-                                            onChange={(e) => setEditingFileName(e.target.value)}
-                                            onKeyDown={handleRename}
-                                            onClick={(e) => e.stopPropagation()}
-                                            className="file-name-input"
-                                            autoFocus
-                                        />
-                                    ) : (
-                                        <span
-                                            className="file-name"
-                                            onDoubleClick={(e) => startRenaming(file, e)}
-                                        >
-                                            {file.name}
-                                        </span>
-                                    )}
+                                    <span className="file-name">{file.name}</span>
                                 </div>
                                 <button
-                                    onClick={(e) => deleteFile(file.id, e)}
+                                    onClick={(e) => handleDeleteFile(file.id, e)}
                                     className="delete-file-button"
                                 >
                                     ×
@@ -125,14 +110,12 @@ const WorkspaceScreen = () => {
                     </div>
                 </div>
 
-                {/* Code Editor Area */}
                 <div className="editor-area">
-
                     <Editor
                         height="90vh"
                         language={activeFile?.language}
                         value={activeFile?.content || ""}
-                        onChange={(value) => updateFileContent(value)}
+                        onChange={handleUpdateContent}
                         theme="vs-light"
                         options={{
                             fontSize: 14,
