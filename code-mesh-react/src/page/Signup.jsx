@@ -9,6 +9,7 @@ const Signup = () => {
 
     localStorage.clear();
     const [error, setError] = useState("");
+    const [succ, setSucc] = useState("");
     
     const { form, updateForm } = useForm({
         email: "",
@@ -22,8 +23,11 @@ const Signup = () => {
         })
 
         if(result.success){
-            localStorage.setItem('token',result.token)
-            localStorage.setItem('user',JSON.stringify(result.user))
+            localStorage.setItem('token',result.data.token)
+            localStorage.setItem('user',JSON.stringify(result.data.user))
+            setSucc('Your account has been successfully created')
+            console.log(result)
+            // navigate('/workspace')
         }else{
             setError(result.message)
         }
@@ -36,6 +40,7 @@ const Signup = () => {
 
                 <h1>CodeMesh</h1>
                 {error && <h2 className="alert">{error}</h2>}
+                {succ && <h2 className="alert-succ">{succ}</h2>}
 
                     <div className="login-form">
                         <div>
@@ -57,7 +62,7 @@ const Signup = () => {
                         <div>
                             <button onClick={signup}>Sign UP</button>
                             <br/>
-                            <a href="#"
+                            <a 
                                                     onClick={() => {
                                                         navigate("/login");
                                                     }}
