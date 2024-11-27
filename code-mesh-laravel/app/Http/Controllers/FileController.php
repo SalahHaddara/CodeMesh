@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\Events\EditFile;
 
 class FileController extends Controller
 {
@@ -85,6 +86,7 @@ class FileController extends Controller
         }
 
         Storage::put($file->file_path, $request->content);
+        broadcast(new EditFile($file->file_path,  $request->content));
 
         return response()->json([
             'status' => 'success',
