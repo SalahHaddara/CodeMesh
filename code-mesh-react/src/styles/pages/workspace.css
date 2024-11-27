@@ -1,0 +1,235 @@
+.workspace {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-bar {
+    background-color: #1f2937;
+    color: white;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.nav-title {
+    font-weight: 600;
+}
+
+.active-filename {
+    color: #9ca3af;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.nav-button {
+    background: none;
+    border: none;
+    color: white;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.nav-button:hover {
+    background-color: #374151;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+}
+
+.file-explorer {
+    width: 224px;
+    background-color: white;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+}
+
+.file-explorer-content {
+    padding: 16px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.file-explorer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.section-title {
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.new-file-button {
+    padding: 4px 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.new-file-button:hover {
+    background-color: #f3f4f6;
+}
+
+.file-item {
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-bottom: 2px;
+}
+
+.file-item:hover {
+    background-color: #f3f4f6;
+}
+
+.file-item.active {
+    background-color: #dbeafe;
+    color: #2563eb;
+}
+
+.file-item-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.file-icon {
+    font-size: 0.875rem;
+}
+
+.file-name {
+    font-size: 0.875rem;
+}
+
+.delete-file-button {
+    opacity: 0;
+    background: none;
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.file-item:hover .delete-file-button {
+    opacity: 1;
+}
+
+.delete-file-button:hover {
+    background-color: #e5e7eb;
+}
+
+.editor-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+
+.editor-tabs {
+    display: flex;
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.editor-tab {
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.editor-tab:hover {
+    background-color: #f3f4f6;
+}
+
+.editor-tab.active {
+    background-color: white;
+    color: #2563eb;
+    border-top: 2px solid #2563eb;
+    margin-top: -1px;
+}
+
+.close-tab-button {
+    background: none;
+    border: none;
+    padding: 2px 6px;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #6b7280;
+}
+
+.close-tab-button:hover {
+    background-color: #e5e7eb;
+}
+
+.editor-area {
+    flex: 1;
+    position: relative;
+}
+
+.code-editor {
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+    font-family: monospace;
+    font-size: 14px;
+    resize: none;
+    border: none;
+}
+
+.code-editor:focus {
+    outline: none;
+}
+
+.empty-editor {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    background-color: white;
+}
+
+/* Add these styles to your workspace.css file */
+
+.file-name-input {
+    font-size: 0.875rem;
+    padding: 2px 4px;
+    border: 1px solid #2563eb;
+    border-radius: 4px;
+    background: white;
+    outline: none;
+    width: 120px;
+}
+
+.file-name-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
