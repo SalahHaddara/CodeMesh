@@ -9,11 +9,14 @@ class OpenAiController extends Controller
 {
     public function validateScript(Request $request)
     {
-        $code = $request->input('code');
+        $request->validate([
+            'code' => 'required|string',
+            'language' => 'required|string', 
+        ]);
 
-        if (!$code) {
-            return response()->json(['error' => 'Code is required.'], 400);
-        }
+        $code = $request->input('code');
+        $language = $request->input('language');
+
 
         try {
         $response = Http::withHeaders([
@@ -29,9 +32,6 @@ class OpenAiController extends Controller
                     [line nb, character nb] (i want to take them as an (x,y)),
                     solution: a brief steps to help the code runs(like if there is missing syntax just say add this character(and this character should be at the (x,y) you wrote before)),and most important dont give the user the code of solution, just what to do
 
-                
-                
-                
                 " . $code],
             ],
         ]);

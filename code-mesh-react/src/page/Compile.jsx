@@ -1,57 +1,94 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 
-const Compiler = () => {
-    const [sourceCode, setSourceCode] = useState('');
-    const [languageId, setLanguageId] = useState(54); 
-    const [stdin, setStdin] = useState('');
-    const [output, setOutput] = useState('');
+const CodeValidator = () => {
+  const [code, setCode] = useState(""); 
+  const [language, setLanguage] = useState("python"); 
+  const [analysis, setAnalysis] = useState(null);
+  const [error, setError] = useState(""); 
 
-    const handleCompile = async () => {
-        try {
-            const response = await axios.post('http://127.0.0.1:8000/api/compile', {
-                source_code: sourceCode,
-                language_id: languageId,
-                stdin: stdin,
-            });
-            setOutput(response.data.stdout || response.data.stderr || 'No output');
-        } catch (error) {
-            console.error(error);
-            setOutput('Error occurred while compiling code.');
-        }
-    };
+  const handleValidate = async () => {
+    setError(""); 
+    setAnalysis(null); 
 
-    return (
-        <div>
-            <h1>Online Code Compiler</h1>
-            <textarea
-                rows="10"
-                cols="50"
-                placeholder="Write your code here..."
-                value={sourceCode}
-                onChange={(e) => setSourceCode(e.target.value)}
-            ></textarea>
-            <br />
-            <select value={languageId} onChange={(e) => setLanguageId(Number(e.target.value))}>
-                <option value={54}>C++</option>
-                <option value={71}>Python 3</option>
-                <option value={62}>Java</option>
-                {/* Add more languages as needed */}
-            </select>
-            <br />
-            <textarea
-                rows="5"
-                cols="50"
-                placeholder="Input data (stdin)"
-                value={stdin}
-                onChange={(e) => setStdin(e.target.value)}
-            ></textarea>
-            <br />
-            <button onClick={handleCompile}>Compile and Run</button>
-            <h2>Output:</h2>
-            <pre>{output}</pre>
-        </div>
-    );
+    if (!code) {
+      setError("Code is required.");
+      return;
+    }
+
+    try {
+
+      const response = await axios.post("http://127.0.0.1:8000/api/analyse", {
+        code,
+        language, 
+      });
+
+      setAnalysis(response.data);
+    } catch (err) {
+    
+      setError(err.response?.data?.error || "An unexpected error occurred.");
+    }
+  };
+
+  return (
+    <div style={{ margin: "20px" }}>
+      <h1>Code Validator</h1>
+
+      <textarea
+        rows="10"
+        cols="50"
+        placeholder="Write your code here..."
+        value={code}
+        onChange={(e) => setCode(e.target.value)}
+      ></textarea>
+      <br />
+
+      <label htmlFor="language">Select Language: </label>
+      <select
+        id="language"
+        value={language}
+        onChange={(e) => setLanguage(e.target.value)}
+        style={{ marginTop: "10px" }}
+      >
+        <option value="python">Python</option>
+        <option value="javascript">JavaScript</option>
+        <option value="cpp">C++</option>
+        <option value="java">Java</option>
+        <option value="ruby">Ruby</option>
+      </select>
+      <br />
+
+      <button onClick={handleValidate} style={{ marginTop: "10px" }}>
+        Validate Code
+      </button>
+
+      <div style={{ marginTop: "20px" }}>
+        {error && <p style={{ color: "red" }}>Error: {error}</p>}
+
+        {analysis && (
+          <div>
+            <h2>Analysis Result</h2>
+            <p>
+              <strong>Result:</strong> {analysis.result || "N/A"}
+            </p>
+            <p>
+              <strong>Status:</strong> {analysis.status || "N/A"}
+            </p>
+            <p>
+              <strong>Error:</strong> {analysis.error || "None"}
+            </p>
+            <p>
+              <strong>Coordinates:</strong>{" "}
+              {analysis.coordinates ? `(${analysis.coordinates[0]}, ${analysis.coordinates[1]})` : "N/A"}
+            </p>
+            <p>
+              <strong>Solution:</strong> {analysis.solution || "None"}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
-export default Compiler;
+export default CodeValidator;
