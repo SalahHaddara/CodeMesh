@@ -86,7 +86,7 @@ class FileController extends Controller
         }
 
         Storage::put($file->file_path, $request->content);
-        broadcast(new EditFile($file->file_path,  $request->content));
+        broadcast(new EditFile($file->file_path,  $request->content,$id));
 
         return response()->json([
             'status' => 'success',
